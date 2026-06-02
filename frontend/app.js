@@ -7,7 +7,6 @@ async function getAllUsers() {
     return;
   }
   let data = await resp.json();
-  console.log(data);
 
   for (let i = 0; i < data.length; i++) {
     let usuario = data[i];
@@ -59,7 +58,6 @@ async function createUser() {
 
 document.querySelector(".btn-save").addEventListener("click", createUser);
 
-
 // Método PUT
 document.querySelector(".table-section").addEventListener("click", (e) => {
   const button = e.target.closest(".btn-edit");
@@ -70,8 +68,9 @@ document.querySelector(".table-section").addEventListener("click", (e) => {
     document.querySelector("#idade").value = button.dataset.idade;
     document.querySelector("#email").value = button.dataset.email;
     const id = button.dataset.id;
+    console.log(id);
     // document.querySelector("#senha").value = button.dataset.senha;
-    updateUsers();
+    updateUsers(id);
   }
 });
 
@@ -79,12 +78,23 @@ async function updateUsers(id) {
   document.querySelector(".btn-save").removeEventListener("click", createUser);
 
   document.querySelector(".btn-save").addEventListener("click", async () => {
-    let url = `http://127.0.0.1:3000/updateUsers/${id}`;
+    let url = `http://127.0.0.1:3000/users/updateUsers/${id}`;
 
     let nome = document.querySelector("#nome").value;
     let idade = document.querySelector("#idade").value;
     let email = document.querySelector("#email").value;
+    console.log(nome, idade, email, id);
     // let senha = document.querySelector("#senha").value;
+    let resp = await fetch(url, {
+      method: "PUT",
+      headers: { "Content-type": "application/json" },
+      body: JSON.stringify({ name: nome, idade: idade, email: email }),
+    });
+    if (!resp.ok) {
+      console.error("Erro ao atualizar usuário:", resp.statusText);
+      return;
+    }
+    window.location.reload();
   });
 }
 
